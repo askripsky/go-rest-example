@@ -1,0 +1,13 @@
+api:  
+  build: .
+  ports: 
+    - 3000:3000
+  links:
+    - database
+  environment:
+    - DB_NAME=todos
+    - DB_SERVER=database
+
+database:  
+  image: mongo:latest
+  command: mongod --smallfiles --quiet --logpath=/dev/null
