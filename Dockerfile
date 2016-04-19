@@ -4,9 +4,7 @@ FROM golang:latest
 ADD . /go/src/github.com/askripsky/go-rest-example
 
 # Install our dependencies
-RUN go get github.com/go-martini/martini
-RUN go get github.com/martini-contrib/binding
-RUN go get github.com/martini-contrib/render
+RUN go get github.com/gin-gonic/gin
 RUN go get labix.org/v2/mgo
 RUN go get labix.org/v2/mgo/bson
 

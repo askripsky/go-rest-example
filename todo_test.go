@@ -12,14 +12,15 @@ import (
     "github.com/askripsky/go-rest-example/todo"
     "labix.org/v2/mgo"
     "labix.org/v2/mgo/bson"
-    "github.com/go-martini/martini"
     "bytes"
+    "github.com/gin-gonic/gin"
+    "strings"
 )
 
 var _ = Describe("Todos", func() {
     var dbName string
     var session *mgo.Session
-    var server *martini.ClassicMartini
+    var server *gin.Engine
     var request *http.Request
     var recorder *httptest.ResponseRecorder
 
@@ -43,9 +44,9 @@ var _ = Describe("Todos", func() {
 
         Context("no Todos exist", func() {
             It("returns no todos", func() {
-                server.Martini.ServeHTTP(recorder, request)
+                server.ServeHTTP(recorder, request)
                 Expect(recorder.Code).To(Equal(200))
-                Expect(recorder.Body.String()).To(Equal("[]"))
+                Expect(strings.TrimSpace(recorder.Body.String())).To(Equal("[]"))
             })
         })
 
@@ -58,7 +59,7 @@ var _ = Describe("Todos", func() {
             })
 
             It("returns existing Todos", func() {
-                server.Martini.ServeHTTP(recorder, request)
+                server.ServeHTTP(recorder, request)
                 Expect(recorder.Code).To(Equal(200))
 
                 var todos []todo.Todo
@@ -82,7 +83,7 @@ var _ = Describe("Todos", func() {
 
         Context("Create new Todo", func() {
             It("returns saved Todo", func() {
-                server.Martini.ServeHTTP(recorder, request)
+                server.ServeHTTP(recorder, request)
                 Expect(recorder.Code).To(Equal(201))
 
                 var savedTodo todo.Todo
@@ -104,7 +105,7 @@ var _ = Describe("Todos", func() {
             })
 
             It("returns not found", func() {
-                server.Martini.ServeHTTP(recorder, request)
+                server.ServeHTTP(recorder, request)
                 Expect(recorder.Code).To(Equal(404))
             })
         })
@@ -130,7 +131,7 @@ var _ = Describe("Todos", func() {
             })
 
             It("returns updated Todo", func() {
-                server.Martini.ServeHTTP(recorder, request)
+                server.ServeHTTP(recorder, request)
                 Expect(recorder.Code).To(Equal(200))
 
                 var updatedTodo todo.Todo
@@ -139,7 +140,7 @@ var _ = Describe("Todos", func() {
             })
 
             It("updates the Todo in the database", func() {
-                server.Martini.ServeHTTP(recorder, request)
+                server.ServeHTTP(recorder, request)
 
                 var updatedTodo todo.Todo
                 collection.FindId(idToUpdate).One(&updatedTodo)
@@ -160,7 +161,7 @@ var _ = Describe("Todos", func() {
             })
 
             It("returns not found", func() {
-                server.Martini.ServeHTTP(recorder, request)
+                server.ServeHTTP(recorder, request)
                 Expect(recorder.Code).To(Equal(404))
             })
         })
@@ -182,14 +183,14 @@ var _ = Describe("Todos", func() {
             })
 
             It("returns success", func() {
-                server.Martini.ServeHTTP(recorder, request)
+                server.ServeHTTP(recorder, request)
                 Expect(recorder.Code).To(Equal(200))
 
                 Expect(len(recorder.Body.Bytes())).To(Equal(0))
             })
 
             It("deletes the Todo in the database", func() {
-                server.Martini.ServeHTTP(recorder, request)
+                server.ServeHTTP(recorder, request)
 
                 count, _ := collection.FindId(idToDelete).Count()
                 Expect(count).To(Equal(0))

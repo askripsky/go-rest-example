@@ -1,4 +1,4 @@
-This is an example of a REST API implemented in Go.  Martini is used for the web framework and Ginkgo is used for tests.
+This is an example of a REST API implemented in Go.  Gin is used for the web framework and Ginkgo is used for tests.
 
 ## Referenced Posts
  * http://ewanvalentine.io/writing-and-running-go-apis-in-docker/
